@@ -50,7 +50,7 @@ int duple_list_delete(duple_list *list, void *data);
 
 // 销毁
 int duple_list_node_free(void *data);
-void duple_list_destory(duple_list *list);
+void duple_list_destroy(duple_list *list);
 
 
 #endif

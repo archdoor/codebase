@@ -1,6 +1,7 @@
 #ifndef __MEMORY_POOL_H__
 #define __MEMORY_POOL_H__
 
+#include <pthread.h>
 #include "duple_list.h"
 
 #define MEMORY_LEISURE 0x00 
@@ -8,29 +9,30 @@
 
 typedef struct 
 {
-    unsigned char leisure_flag; // 是否空闲
-}memory_node;
+    void *buff;    // 内存指针
+}memory_node_t;
+
+#define MEMORY_NODE_T_SIZE sizeof(memory_node_t)
 
 typedef struct
 {
-    int node_num;   // 内存节点总个数
     int node_size;  // 内存节点长度
-    int free_node_num;      // 空闲内存节点个数
-    duple_list *memory_list;    // 内存节点链表
-    pthread_mutex_t m_mutex;    // 互斥量
-}memory_pool;
+    duple_list *memory_list_leisure;    // 空闲内存节点链表
+    duple_list *memory_list_occupied;    // 占用内存节点链表
+    pthread_mutex_t mutex;    // 互斥量
+}memory_pool_t;
 
 
-// 内存池规划
-int memory_pool_schedule(int node_num, int node_size);
+// 创建内存池
+memory_pool_t *memory_pool_new(int node_num, int node_size);
 // 申请节点
-void *memory_get(int node_num, int node_size);
+void *memory_get(memory_pool_t *pool);
 // 持续申请节点
-void *memory_persist_get(int node_num, int node_size);
+void *memory_persist_get(memory_pool_t *pool);
 // 释放节点
-int memory_free(int node_num, int node_size);
+int memory_free(memory_pool_t *pool, void *node);
 // 内存池销毁
-int memory_pool_destory(int node_num, int node_size);
+void memory_pool_destroy(memory_pool_t *pool);
 
 
 #endif

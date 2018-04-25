@@ -212,7 +212,7 @@ int duple_list_node_free(void *data)
 }
 
 // 列表销毁
-void duple_list_destory(duple_list *list)
+void duple_list_destroy(duple_list *list)
 {
     duple_list_node *move = list->head.next;
     duple_list_node *release = move;
