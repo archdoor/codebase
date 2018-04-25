@@ -16,11 +16,11 @@ void print_data(MyData *data)
 void print_list(duple_list *list)
 {
     printf("num:%d\n", list->size);
-    MyData *data = duple_list_get_front(list);
+    MyData *data = (MyData *)duple_list_get_front(list);
     while ( data != NULL )
     {
         print_data(data);
-        data = duple_list_get_next(list, data); 
+        data = (MyData *)duple_list_get_next(list, data); 
     }
 }
 
@@ -33,7 +33,7 @@ int main()
         return -1;
     }
 
-    MyData *data_0 = duple_list_node_new(sizeof(MyData));
+    MyData *data_0 = (MyData *)duple_list_node_new(sizeof(MyData));
     if ( data_0 == NULL )
     {
         printf("get new node error\n");
@@ -46,7 +46,7 @@ int main()
     printf("\n");
 
 
-    MyData *data_1 = duple_list_node_new(sizeof(MyData));
+    MyData *data_1 = (MyData *)duple_list_node_new(sizeof(MyData));
     if ( data_1 == NULL )
     {
         printf("get new node error\n");
@@ -58,7 +58,7 @@ int main()
     print_list(list);
     printf("\n");
 
-    MyData *data_2 = duple_list_node_new(sizeof(MyData));
+    MyData *data_2 = (MyData *)duple_list_node_new(sizeof(MyData));
     if ( data_2 == NULL )
     {
         printf("get new node error\n");

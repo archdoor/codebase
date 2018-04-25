@@ -20,6 +20,8 @@ duple_list *duple_list_new()
     }
 
     list->size = 0;
+    list->head.in_list_flag = IN_DUPLE_LIST;
+    list->head.alloc_flag = DUPLE_LIST_ALLOC;
     list->head.next = list->head.pre = &list->head;
 
     return list;
@@ -35,6 +37,8 @@ void *duple_list_node_new(int size)
     }
 
     duple_list_node *node = (duple_list_node *)buff;
+    node->in_list_flag = OUT_DUPLE_LIST;
+    node->alloc_flag = DUPLE_LIST_ALLOC;
     node->next = node->pre = NULL;
 
     memset(buff + DUPLE_LIST_NODE_SIZE, 0, size + 1);
@@ -53,6 +57,8 @@ void duple_list_push_front(duple_list *list, void *data)
     list->head.next = node;
     node->next->pre = node;
 
+    node->in_list_flag = IN_DUPLE_LIST;
+
     list->size++;
 }
 
@@ -66,6 +72,8 @@ void duple_list_push_back(duple_list *list, void *data)
 
     list->head.pre = node;
     node->pre->next = node;
+
+    node->in_list_flag = IN_DUPLE_LIST;
 
     list->size++;
 }
@@ -114,6 +122,8 @@ int duple_list_pop(duple_list *list, void *data)
     node->pre->next = node->next;
     node->next->pre = node->pre;
 
+    node->in_list_flag = OUT_DUPLE_LIST;
+
     list->size--;
 
     return 0;
@@ -131,6 +141,8 @@ void *duple_list_pop_front(duple_list *list)
 
     list->head.next = node->next;
     node->next->pre = &list->head;
+
+    node->in_list_flag = OUT_DUPLE_LIST;
 
     list->size--;
 
@@ -150,6 +162,8 @@ void *duple_list_pop_back(duple_list *list)
     list->head.pre = node->pre;
     node->pre->next = &list->head;
 
+    node->in_list_flag = OUT_DUPLE_LIST;
+
     list->size--;
 
     return ((char *)node + DUPLE_LIST_NODE_SIZE);
@@ -158,33 +172,43 @@ void *duple_list_pop_back(duple_list *list)
 // 双向循环链表删除节点
 int duple_list_delete(duple_list *list, void *data)
 {
-    if ( list->size <= 0 )
+    duple_list_node *node = (duple_list_node *)(data - DUPLE_LIST_NODE_SIZE);
+
+    if ( (list->size <= 0) || (node->in_list_flag == OUT_DUPLE_LIST) )
     {
         return -1;
     }
 
-    duple_list_node *del = (duple_list_node *)(data - DUPLE_LIST_NODE_SIZE);
-    duple_list_node *move = list->head.next;
-    while ( move != &list->head )
-    {
-        if ( move == del )
-        {
-            move->pre->next = move->next;
-            move->next->pre = move->pre;
-            free(move);
-            list->size--;
-            return 0;
-        }
-        move = move->next;
-    }
-    return -1;
+    node->pre->next = node->next;
+    node->next->pre = node->pre;
+
+    node->in_list_flag = OUT_DUPLE_LIST;
+    node->alloc_flag = DUPLE_LIST_NALLOC;
+    node->next = node->pre = NULL;
+
+    free(node);
+    list->size--;
+
+    return 0;
 }
 
 // 释放单节点
-void duple_list_node_free(void *data)
+int duple_list_node_free(void *data)
 {
     duple_list_node *node = (duple_list_node *)(data - DUPLE_LIST_NODE_SIZE);
+
+    if ( (node->in_list_flag == IN_DUPLE_LIST) || ( node->alloc_flag == DUPLE_LIST_NALLOC ) )
+    {
+        return -1;
+    }
+
+    node->in_list_flag = OUT_DUPLE_LIST;
+    node->alloc_flag = DUPLE_LIST_NALLOC;
+    node->next = node->pre = NULL;
+
     free(node);
+
+    return 0;
 }
 
 // 列表销毁
@@ -197,9 +221,20 @@ void duple_list_destory(duple_list *list)
     {
         release = move;
         move = move->next;
+
+        release->in_list_flag = OUT_DUPLE_LIST;
+        release->alloc_flag = DUPLE_LIST_NALLOC;
+        release->next = NULL;
+        release->pre = NULL;
+
         free(release);
         list->size--;
     }
+
+    list->head.in_list_flag = OUT_DUPLE_LIST;
+    list->head.alloc_flag = DUPLE_LIST_NALLOC;
+    list->head.next = NULL;
+    list->head.pre = NULL;
 
     free(list);
 }

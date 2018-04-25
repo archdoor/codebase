@@ -1,9 +1,17 @@
 #ifndef __DUPLE_LIST_H__
 #define __DUPLE_LIST_H__
 
+#define IN_DUPLE_LIST 0x55
+#define OUT_DUPLE_LIST 0xaa
+
+#define DUPLE_LIST_ALLOC 0xFF
+#define DUPLE_LIST_NALLOC 0x00
+
 // 双向循环链表节点
 typedef struct _duple_list_node
 {
+    unsigned char in_list_flag; // 是否在链表内
+    unsigned char alloc_flag; // 是否内部API申请的内存
     struct _duple_list_node *next;
     struct _duple_list_node *pre;
 }duple_list_node;
@@ -41,7 +49,7 @@ void *duple_list_pop_back(duple_list *list);
 int duple_list_delete(duple_list *list, void *data);
 
 // 销毁
-void duple_list_node_free(void *data);
+int duple_list_node_free(void *data);
 void duple_list_destory(duple_list *list);
 
 
