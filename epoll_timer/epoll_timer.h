@@ -63,7 +63,7 @@ int eptimer_add(eptimer_base *base, EPTIMER_OPT opt, eptimer *timer, void (*expi
 // 删除定时器
 int eptimer_delete(eptimer_base *base, eptimer *timer);
 // 销毁定时器
-void eptimer_free(eptimer *timer);
+int eptimer_free(eptimer *timer);
 
 #endif
 

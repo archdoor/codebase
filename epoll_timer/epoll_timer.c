@@ -233,7 +233,7 @@ int eptimer_delete(eptimer_base *base, eptimer *timer)
 }
 
 // 销毁定时器
-void eptimer_free(eptimer *timer)
+int eptimer_free(eptimer *timer)
 {
     // 检查定时器是否还在时间轮上
     if ( timer->onwheel == 1 )
@@ -242,6 +242,8 @@ void eptimer_free(eptimer *timer)
     }
 
     duple_list_node_free(timer);
+
+    return 0;
 }
 
 
