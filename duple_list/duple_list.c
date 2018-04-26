@@ -112,12 +112,12 @@ void *duple_list_get_next(duple_list *list, void *data)
 // 取出双向循环链表指定节点(从原链表中删除)
 int duple_list_pop(duple_list *list, void *data)
 {
-    if ( list->size <= 0 )
+    duple_list_node *node = (duple_list_node *)(data - DUPLE_LIST_NODE_SIZE);
+
+    if ( (list->size <= 0) || node->in_list_flag != IN_DUPLE_LIST )
     {
         return -1;
     }
-
-    duple_list_node *node = (duple_list_node *)(data - DUPLE_LIST_NODE_SIZE);
 
     node->pre->next = node->next;
     node->next->pre = node->pre;
@@ -174,7 +174,7 @@ int duple_list_delete(duple_list *list, void *data)
 {
     duple_list_node *node = (duple_list_node *)(data - DUPLE_LIST_NODE_SIZE);
 
-    if ( (list->size <= 0) || (node->in_list_flag == OUT_DUPLE_LIST) )
+    if ( (list->size <= 0) || (node->in_list_flag != IN_DUPLE_LIST) )
     {
         return -1;
     }

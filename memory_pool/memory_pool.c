@@ -75,7 +75,7 @@ void *memory_get(memory_pool_t *pool)
 
     pthread_mutex_unlock(&pool->mutex);
 
-    return NULL;
+    return node;
 }
 
 // 持续申请节点
