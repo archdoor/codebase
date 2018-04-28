@@ -9,7 +9,7 @@ int g_count = 0;
 
 void trigger_get_memory(int sig)
 {
-    g_memory[g_count] = memory_get(g_pool);
+    g_memory[g_count] = memory_persist_get(g_pool);
     if ( g_memory[g_count] != NULL )
     {
         g_count++;

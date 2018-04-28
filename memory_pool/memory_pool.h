@@ -7,13 +7,6 @@
 #define MEMORY_LEISURE 0x00 
 #define MEMORY_OCCUPIED 0xFF 
 
-typedef struct 
-{
-    void *buff;    // 内存指针
-}memory_node_t;
-
-#define MEMORY_NODE_T_SIZE sizeof(memory_node_t)
-
 typedef struct
 {
     int node_size;  // 内存节点长度

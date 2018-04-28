@@ -59,7 +59,7 @@ eptimer *eptimer_new(int sec, int msec);
 // 定时器集启动
 int eptimer_base_start(eptimer_base *base);
 // 添加定时器
-int eptimer_add(eptimer_base *base, EPTIMER_OPT opt, eptimer *timer, void (*expire_cb), void *args);
+int eptimer_add(eptimer_base *base, EPTIMER_OPT opt, eptimer *timer, void (*expire_cb)(void *), void *args);
 // 删除定时器
 int eptimer_delete(eptimer_base *base, eptimer *timer);
 // 销毁定时器

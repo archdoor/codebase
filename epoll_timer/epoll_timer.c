@@ -47,7 +47,7 @@ eptimer_base *eptimer_base_new()
             int j = 0;
             for ( j = 0; j < i; ++j )
             {
-                duple_list_destory(base->timer_list[j]);
+                duple_list_destroy(base->timer_list[j]);
             }
 
             free(base);
@@ -62,7 +62,7 @@ eptimer_base *eptimer_base_new()
 // 创建定时器
 eptimer *eptimer_new(int sec, int msec)
 {
-    eptimer *timer = duple_list_node_new(EPTIMER_SIZE);
+    eptimer *timer = (eptimer *)duple_list_node_new(EPTIMER_SIZE);
     if ( timer == NULL )
     {
         return NULL;
@@ -98,11 +98,9 @@ void eptimer_run(eptimer_base *base)
 
     duple_list *list = base->timer_list[base->wheel.cur_slot];
 
-    eptimer *timer = duple_list_pop_front(list);
+    eptimer *timer = (eptimer *)duple_list_pop_front(list);
     while ( timer != NULL )
     {
-        timer->expire_cb(timer->args);
-
         if ( timer->option == EPTIMER_PERSIST )
         {
             eptimer_reset(base, timer);
@@ -113,7 +111,9 @@ void eptimer_run(eptimer_base *base)
             timer->onwheel = 0;
         }
 
-        timer = duple_list_pop_front(list);
+        timer->expire_cb(timer->args);
+
+        timer = (eptimer *)duple_list_pop_front(list);
     }
 
     pthread_mutex_unlock(&base->mutex);
@@ -150,7 +150,7 @@ int eptimer_base_start(eptimer_base *base)
 }
 
 // 添加定时器
-int eptimer_add(eptimer_base *base, EPTIMER_OPT opt, eptimer *timer, void (*expire_cb), void *args)
+int eptimer_add(eptimer_base *base, EPTIMER_OPT opt, eptimer *timer, void (*expire_cb)(void *), void *args)
 {
     // 检查定时器是否已经在时间轮上
     if ( timer->onwheel == 1 )
@@ -224,6 +224,8 @@ int eptimer_delete(eptimer_base *base, eptimer *timer)
         return -1;
     }
 
+    timer->onwheel = 0;
+
     // 计数
     --base->size;
 
@@ -240,6 +242,8 @@ int eptimer_free(eptimer *timer)
     {
         return -1;
     }
+
+    timer->onwheel = 0;
 
     duple_list_node_free(timer);
 

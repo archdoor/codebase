@@ -49,7 +49,7 @@ void *duple_list_node_new(int size)
 // 双向循环链表头插法
 void duple_list_push_front(duple_list *list, void *data)
 {
-    duple_list_node *node = (duple_list_node *)(data - DUPLE_LIST_NODE_SIZE);
+    duple_list_node *node = (duple_list_node *)((char *)data - DUPLE_LIST_NODE_SIZE);
 
     node->pre = &list->head;
     node->next = list->head.next;
@@ -65,7 +65,7 @@ void duple_list_push_front(duple_list *list, void *data)
 // 双向循环链表尾插法
 void duple_list_push_back(duple_list *list, void *data)
 {
-    duple_list_node *node = (duple_list_node *)(data - DUPLE_LIST_NODE_SIZE);
+    duple_list_node *node = (duple_list_node *)((char *)data - DUPLE_LIST_NODE_SIZE);
 
     node->next = &list->head;
     node->pre = list->head.pre;
@@ -101,7 +101,7 @@ void *duple_list_get_back(duple_list *list)
 // 获取下一个节点
 void *duple_list_get_next(duple_list *list, void *data)
 {
-    duple_list_node *node = (duple_list_node *)(data - DUPLE_LIST_NODE_SIZE);
+    duple_list_node *node = (duple_list_node *)((char *)data - DUPLE_LIST_NODE_SIZE);
     if ( node->next == &list->head )
     {
         return NULL;
@@ -112,7 +112,7 @@ void *duple_list_get_next(duple_list *list, void *data)
 // 取出双向循环链表指定节点(从原链表中删除)
 int duple_list_pop(duple_list *list, void *data)
 {
-    duple_list_node *node = (duple_list_node *)(data - DUPLE_LIST_NODE_SIZE);
+    duple_list_node *node = (duple_list_node *)((char *)data - DUPLE_LIST_NODE_SIZE);
 
     if ( (list->size <= 0) || node->in_list_flag != IN_DUPLE_LIST )
     {
@@ -172,7 +172,7 @@ void *duple_list_pop_back(duple_list *list)
 // 双向循环链表删除节点
 int duple_list_delete(duple_list *list, void *data)
 {
-    duple_list_node *node = (duple_list_node *)(data - DUPLE_LIST_NODE_SIZE);
+    duple_list_node *node = (duple_list_node *)((char *)data - DUPLE_LIST_NODE_SIZE);
 
     if ( (list->size <= 0) || (node->in_list_flag != IN_DUPLE_LIST) )
     {
@@ -195,7 +195,7 @@ int duple_list_delete(duple_list *list, void *data)
 // 释放单节点
 int duple_list_node_free(void *data)
 {
-    duple_list_node *node = (duple_list_node *)(data - DUPLE_LIST_NODE_SIZE);
+    duple_list_node *node = (duple_list_node *)((char *)data - DUPLE_LIST_NODE_SIZE);
 
     if ( (node->in_list_flag == IN_DUPLE_LIST) || ( node->alloc_flag == DUPLE_LIST_NALLOC ) )
     {

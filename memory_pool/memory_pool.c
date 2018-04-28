@@ -43,20 +43,18 @@ memory_pool_t *memory_pool_new(int node_num, int node_size)
 
     // 内存节点
     int i = 0;
-    memory_node_t *node = NULL;
+    void *buff = NULL;
 
     for ( i = 0; i < node_num; ++i )
     {
-        node = (memory_node_t *)duple_list_node_new(MEMORY_NODE_T_SIZE + node_size);
-        if ( node == NULL )
+        buff = duple_list_node_new(node_size);
+        if ( buff == NULL )
         {
             free(pool);
             duple_list_destroy(pool->memory_list_leisure);
         }
 
-        node->buff = (char *)(node) + MEMORY_NODE_T_SIZE;
-
-        duple_list_push_back(pool->memory_list_leisure, node);
+        duple_list_push_back(pool->memory_list_leisure, buff);
     }
 
     return pool;
