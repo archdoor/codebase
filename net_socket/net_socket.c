@@ -1,11 +1,8 @@
-#include <iostream>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <sys/time.h>
 #include <unistd.h>
-
-#include "net.h"
-#include "log.h"
+#include "net_socket.h"
 
 // 获取TCP套接字
 int GetTcpSocket()
