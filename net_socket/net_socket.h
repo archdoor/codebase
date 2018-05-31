@@ -1,32 +1,35 @@
 #ifndef __NET_SOCKET_H__
 #define __NET_SOCKET_H__
 
+#include <arpa/inet.h>
+
 // TCP
-int GetTcpSocket();
-int GetTcpBindSocket(const char *ip, unsigned short port);
-int SetSockTimeout(int sockfd, int sec);
-int Connect(int sockfd, const char *ip, unsigned short port);
-int Listen(int sockfd, int backlog);
-int Accept(int sockfd, struct sockaddr_in *addr);
+int tcp_get_socket();
+int tcp_get_bind_socket(const char *ip, unsigned short port);
+int tcp_connect(int sockfd, const char *ip, unsigned short port);
+int tcp_listen(int sockfd, int backlog);
+int tcp_accept(int sockfd, struct sockaddr_in *addr);
 
-int Recv(int sockfd, void *buff, int len);
-int NBlockRecv(int sockfd, void *buff, int len);
-int PersistRecv(int sockfd, void *buff, int len);
-int RecvAll(int sockfd, void *buff, int len);
-int FackRecv(int sockfd, void *buff, int len);
-int ClearRecv(int sock);
+int tcp_recv(int sockfd, void *buff, int len);
+int tcp_nowait_recv(int sockfd, void *buff, int len);
+int tcp_persist_recv(int sockfd, void *buff, int len);
+int tcp_waitall_recv(int sockfd, void *buff, int len);
+int tcp_peek_recv(int sockfd, void *buff, int len);
+int tcp_clear_recv(int sock);
 
-int Send(int sockfd, void *buff, int len);
+int tcp_send(int sockfd, void *buff, int len);
 
 // UDP
-int GetUdpSocket();
-int GetUdpBindSocket(const char *ip, unsigned short port);
-int RecvFrom(int sockfd, void *buff, int len);
-int FackRecvFrom(int sockfd, void *buff, int len);
-int PersistRecvFrom(int sockfd, void *buff, int len);
-int SendTo(int sockfd, const char *ip, unsigned short port, void *buff, int len);
+int udp_get_socket();
+int udp_get_bind_socket(const char *ip, unsigned short port);
+int udp_recvfrom(int sockfd, void *buff, int len);
+int udp_peek_recvfrom(int sockfd, void *buff, int len);
+int udp_persist_recvfrom(int sockfd, void *buff, int len);
+int udp_sendto(int sockfd, const char *ip, unsigned short port, void *buff, int len);
 
-int Bind(int sockfd, const char *ip, unsigned short port);
-int CloseSock(int sock);
+int socket_bind(int sockfd, const char *ip, unsigned short port);
+int socket_close(int sock);
+
+int set_socket_timeout(int sockfd, int sec);
 
 #endif

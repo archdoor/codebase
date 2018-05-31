@@ -1,11 +1,10 @@
 #include <sys/socket.h>
-#include <arpa/inet.h>
 #include <sys/time.h>
 #include <unistd.h>
 #include "net_socket.h"
 
 // 获取TCP套接字
-int GetTcpSocket()
+int tcp_get_socket()
 {
 	int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if ( sockfd == -1 ) 
@@ -17,7 +16,7 @@ int GetTcpSocket()
 }
 
 // 获取TCP绑定套接字
-int GetTcpBindSocket(const char *ip, unsigned short port)
+int tcp_get_bind_socket(const char *ip, unsigned short port)
 {
 	int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if ( sockfd == -1 ) 
@@ -25,7 +24,7 @@ int GetTcpBindSocket(const char *ip, unsigned short port)
         return -1;
     }
 
-    if ( Bind(sockfd, ip, port) < 0 )
+    if ( socket_bind(sockfd, ip, port) < 0 )
     {
         return -1;
     }
@@ -34,7 +33,7 @@ int GetTcpBindSocket(const char *ip, unsigned short port)
 }
 
 // 设置套接字超时
-int SetSockTimeout(int sockfd, int sec)
+int set_socket_timeout(int sockfd, int sec)
 {
     struct timeval tv_out;
     tv_out.tv_sec = sec;
@@ -47,7 +46,7 @@ int SetSockTimeout(int sockfd, int sec)
 }
 
 // 套接字关联
-int Bind(int sockfd, const char *ip, unsigned short port)
+int socket_bind(int sockfd, const char *ip, unsigned short port)
 {
     int on = 1;	
     setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(int));
@@ -63,13 +62,13 @@ int Bind(int sockfd, const char *ip, unsigned short port)
 }
 
 // 连接请求监听
-int Listen(int sockfd, int backlog)
+int tcp_listen(int sockfd, int backlog)
 {
     return listen(sockfd, backlog);
 }
 
 // 接收连接请求
-int Accept(int sockfd, struct sockaddr_in *addr)
+int tcp_accept(int sockfd, struct sockaddr_in *addr)
 {
 	socklen_t size = sizeof(struct sockaddr_in);
 
@@ -77,7 +76,7 @@ int Accept(int sockfd, struct sockaddr_in *addr)
 }
 
 // 连接
-int Connect(int sockfd, const char *ip, unsigned short port)
+int tcp_connect(int sockfd, const char *ip, unsigned short port)
 {
 	struct sockaddr_in addr={0};
 	addr.sin_family = AF_INET;
@@ -95,19 +94,19 @@ int Connect(int sockfd, const char *ip, unsigned short port)
 }
 
 // 接收数据
-int Recv(int sockfd, void *buff, int len)
+int tcp_recv(int sockfd, void *buff, int len)
 {
     return recv(sockfd, buff, len, 0);
 }
 
 // 非阻塞接收数据
-int NBlockRecv(int sockfd, void *buff, int len)
+int tcp_nowait_recv(int sockfd, void *buff, int len)
 {
     return recv(sockfd, buff, len, MSG_DONTWAIT);
 }
 
 // 接收固定长度数据
-int PersistRecv(int sockfd, void *buff, int len)
+int tcp_persist_recv(int sockfd, void *buff, int len)
 {
     int recv_len = 0;
 
@@ -125,14 +124,13 @@ int PersistRecv(int sockfd, void *buff, int len)
     return recv_len;
 }
 
-// 接收固定长度数据
-int RecvAll(int sockfd, void *buff, int len)
+int tcp_waitall_recv(int sockfd, void *buff, int len)
 {
     return recv(sockfd, (unsigned char *)buff, len, MSG_WAITALL);
 }
 
 // 接收数据，但不从缓存中取走
-int FackRecv(int sockfd, void *buff, int len)
+int tcp_peek_recv(int sockfd, void *buff, int len)
 {
     int recv_len = 0;
 
@@ -149,7 +147,7 @@ int FackRecv(int sockfd, void *buff, int len)
 }
 
 // 清除Recv缓存
-int ClearRecv(int sockfd)
+int tcp_clear_recv(int sockfd)
 {
     unsigned char buff[128] = {0};
 
@@ -166,13 +164,13 @@ int ClearRecv(int sockfd)
 }
 
 // 发送数据
-int Send(int sockfd, void *buff, int len)
+int tcp_send(int sockfd, void *buff, int len)
 {
     return send(sockfd, buff, len, 0);
 }
 
 // 获取UDP套接字
-int GetUdpSocket()
+int udp_get_socket()
 {
 	int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
     if ( sockfd == -1 ) 
@@ -184,7 +182,7 @@ int GetUdpSocket()
 }
 
 // 获取UDP绑定套接字
-int GetUdpBindSocket(const char *ip, unsigned short port)
+int udp_get_bind_socket(const char *ip, unsigned short port)
 {
 	int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
     if ( sockfd == -1 ) 
@@ -192,7 +190,7 @@ int GetUdpBindSocket(const char *ip, unsigned short port)
         return -1;
     }
 
-    if ( Bind(sockfd, ip, port) < 0 )
+    if ( socket_bind(sockfd, ip, port) < 0 )
     {
         return -1;
     }
@@ -201,12 +199,12 @@ int GetUdpBindSocket(const char *ip, unsigned short port)
 }
 
 // 接收UDP数据
-int RecvFrom(int sockfd, void *buff, int len)
+int udp_recvfrom(int sockfd, void *buff, int len)
 {
     return recvfrom(sockfd, buff, len, 0, NULL, NULL);
 }
 
-int FackRecvFrom(int sockfd, void *buff, int len)
+int udp_peek_recvfrom(int sockfd, void *buff, int len)
 {
     int recv_len = 0;
 
@@ -223,7 +221,7 @@ int FackRecvFrom(int sockfd, void *buff, int len)
 }
 
 // 接收固定长度数据
-int PersistRecvFrom(int sockfd, void *buff, int len)
+int udp_persist_recvfrom(int sockfd, void *buff, int len)
 {
     int recv_len = 0;
 
@@ -242,7 +240,7 @@ int PersistRecvFrom(int sockfd, void *buff, int len)
 }
 
 // 发送UDP数据
-int SendTo(int sockfd, const char *ip, unsigned short port, void *buff, int len)
+int udp_sendto(int sockfd, const char *ip, unsigned short port, void *buff, int len)
 {
 	struct sockaddr_in addr={0};
 	addr.sin_family = AF_INET;
