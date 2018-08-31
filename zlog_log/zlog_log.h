@@ -1,6 +1,7 @@
 #ifndef __ZLOG_LOG_H__
 #define __ZLOG_LOG_H__
 
+#include <assert.h>
 #include <zlog.h>
 
 // 全局分类变量
@@ -24,6 +25,9 @@ extern zlog_category_t *g_cat;
 #define HLogWarn(...)    hzlog_warn(g_cat, __VA_ARGS__)
 #define HLogError(...)   hzlog_error(g_cat, __VA_ARGS__)
 #define HLogFatal(...)   hzlog_fatal(g_cat, __VA_ARGS__)
+
+// 断言定义
+#define ASSERT(EXPR, TEXT) if ( !(EXPR) ) { LogFatal(TEXT); assert(EXPR); }
 
 int zlog_init_with_category(const char *category, const char *confpath);
 
