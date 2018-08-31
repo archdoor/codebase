@@ -13,7 +13,7 @@
 // 创建内存池
 memory_pool_t *memory_pool_new(int node_num, int node_size)
 {
-    memory_pool_t *pool = (memory_pool_t *)malloc(node_num * node_size);
+    memory_pool_t *pool = (memory_pool_t *)malloc(sizeof(memory_pool_t));
     if ( pool == NULL )
     {
         return NULL;

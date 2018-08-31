@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <signal.h>
 #include "memory_pool.h"
 
@@ -12,6 +14,7 @@ void trigger_get_memory(int sig)
     g_memory[g_count] = memory_persist_get(g_pool);
     if ( g_memory[g_count] != NULL )
     {
+        memset(g_memory[g_count], 3, 1024);
         g_count++;
         printf("get success:%d\n", g_count);
     }
@@ -32,6 +35,11 @@ void trigger_free_memory(int sig)
     {
         g_count++;
         printf("free fail\n");
+    }
+
+    if ( g_count == 0 )
+    {
+        exit(0);
     }
 }
 
